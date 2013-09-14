@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>SimplePhone</title>
+		<link rel="stylesheet" TYPE="text/css" href="phone.css">
+		<script src="jquery-2.0.3.min.js"></script>
+		<script src="jssip-0.3.7.js"></script>
+		<script src="phone.js"></script>
+	</head>
+	<body>
+		<div id="main">		
+			<div><input type="text" id="display" value=""/></div>
+			<div class="dialpad" id="phone_dialpad">
+				<table border="1">
+					<tr>
+						<td>1</td><td>2</td><td>3</td>
+					</tr>
+					<tr>
+						<td>4</td><td>5</td><td>6</td>
+					</tr>
+					<tr>
+						<td>7</td><td>8</td><td>9</td>
+					</tr>
+					<tr>
+						<td>*</td><td>0</td><td>#</td>
+					</tr>
+				</table>
+			</div>
+			<div class="tools">
+				<table width="100%">
+					<tr>
+						<td width="25%"><div class="settings" id="settingsbtn"></div></td>
+						<td width="50%"><div class="button dial" id="dialbtn" align="center">Call</div></td>
+						<td width="25%"><div class="back" id="backbtn"><<</div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		<div id="incoming">		
+			<div class="tools">Incoming call from</div>
+			<div class="caller">
+				<div class="name" align="center"></div>
+				<div class="number" align="center"></div>
+			</div>
+			<div class="buttons">
+				<table width="100%">
+					<tr>
+						<td width="50%"><div class="button dial" id="accept" align="center">Accept</div></td>
+						<td width="50%"><div class="button hangup" id="reject" align="center">Reject</div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		<div id="incall">		
+			<div class="tools">In call</div>
+			<div id="rView"  ><video id="remoteView" autoplay poster="unknown.png" width="240" height="240" src=""></video></div>
+			<div id="sView"><video id="selfView" autoplay poster="unknown.png" width="64" height="64" src=""></video></div>
+			<div class="caller">
+				<div class="name" align="center"></div>
+				<div class="number" align="center"></div>
+			</div>
+			<div class="buttons">
+				<table width="100%">
+					<tr>
+						<td width="100%" align="center"><div class="button hangup" id="hangup" align="center">Hangup</div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		<div id="settings">
+			<div class="tools">Settings</div>
+			<div>
+				<table width="100%">
+					<tr>
+						<td>URL:</td><td><input type="text" id="url" value=""/></td>
+					</tr>
+					<tr>
+						<td>User:</td><td><input type="text" id="user" value=""/></td>
+					</tr>
+					<tr>
+						<td>Pass:</td><td><input type="text" id="pass" value=""/></td>
+					</tr>
+				</table>
+			</div>
+			<div class="buttons">
+				<table width="100%">
+					<tr>
+						<td width="50%" align="center"><div class="button cancel" id="cancelbtn" align="center">Cancel</div></td>
+						<td width="50%" align="center"><div class="button save" id="savebtn" align="center">Save</div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		<!--audio id="stream" autoplay hidden="false" controls="no" src=""/-->
+	</body>
+</html>

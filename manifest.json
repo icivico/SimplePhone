@@ -1,0 +1,23 @@
+{
+  "name": "SimplePhone",
+  "description": "Simple SIP/WebRTC softphone.",
+  "manifest_version": 2,
+  "minimum_chrome_version": "28",
+  "version": "0.1.0",
+  "offline_enabled": true,
+  "app": {
+    "background": {
+      "scripts": ["main.js"]
+    }
+  },
+  "permissions": [
+    "storage",
+    "audioCapture",
+    "videoCapture",
+    "notifications"
+  ],
+  "icons": {
+    "16": "assets/logo_128.png",
+    "128": "assets/logo_128.png"
+  }
+}

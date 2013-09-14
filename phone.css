@@ -1,0 +1,217 @@
+body {
+	margin: 0;
+}
+
+div.dialpad table {
+	width: 100%;
+	border-collapse: collapse;
+	border: 1px solid #ddd;
+}
+
+div.dialpad table tr td {
+	text-align: center;
+	font-size: 24px;
+	padding: 15px;
+	color: #33CCFF;
+	cursor: pointer;
+}
+
+div.tools {
+	background-color: #555;
+	color: white;
+	padding: 0px;
+	font-size: 18px;
+}
+
+div.tools table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+div.buttons {
+	position: absolute;
+	height: 46px;
+	left: 0px;
+	right: 0px;
+	bottom: 0px;
+	background-color: #555;
+	color: white;
+	padding: 0px;
+	font-size: 18px;
+}
+
+/** Buttons **/
+div.buttons table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+div.button {
+	color: white;
+	font-size: 18px;
+	padding: 10px;
+	margin: 0px;
+	cursor: pointer;
+}
+
+div.dial {
+	background: linear-gradient(to bottom, #afec20 0%,#98be26 32%,#64781c 100%); /* W3C */
+}
+
+div.dial_pressed {
+	background: linear-gradient(to bottom, #64781c 0%,#98be26 68%,#afec20 100%); /* W3C */
+}
+
+div.hangup {
+	background: linear-gradient(to bottom, #ec202b 0%,#be2636 32%,#781c28 100%); /* W3C */
+}
+
+div.hangup_pressed {
+	background: linear-gradient(to bottom, #781c28 0%,#be2636 68%,#ec202b 100%); /* W3C */
+}
+
+div.save {
+	background: linear-gradient(to bottom, #daf8fa 0%,#92d5f2 32%,#36b2e8 100%); /* W3C */
+}
+
+div.cancel {
+	color: white;
+	font-size: 18px;
+	padding: 10px;
+	margin: 0px;
+	background: linear-gradient(to bottom, #fefefe 0%,#d3d3d3 32%,#9b9b9b 100%); /* W3C */
+	cursor: pointer;
+}
+
+
+div.settings {
+	color: white;
+	font-size: 18px;
+	padding: 2px;
+	margin: 0px;
+	margin-left: 10px;
+	height: 28px;
+	background: url(settings.png) no-repeat;
+	background-size: 32px 32px;
+	cursor: pointer;
+}
+
+div.back {
+	color: white;
+	font-size: 18px;
+	font-weight: bold;
+	padding: 2px;
+	margin: 0px;
+	margin-left: 10px;
+	height: 28px;
+	/*background: url(settings.png) no-repeat;
+	background-size: 32px 32px;*/
+	text-align: center;
+	cursor: pointer;
+}
+
+div.caller {
+	position: absolute;
+	top: 34px;
+	left: 0px;
+	right: 0px;
+	/*background: url(unknown.png) no-repeat;
+	background-size: 240px 240px;*/
+}
+
+div.name {
+	padding-top: 8px;
+	font-size: 18px;
+	color: white;
+	background-color: #555;
+	opacity: 0.6;
+}
+
+div.number {
+	padding-bottom: 8px;
+	font-size: 14px;
+	color: white;
+	background-color: #555;
+	opacity: 0.6;
+}
+
+div#rView {
+	position: absolute;
+	top: 34px;
+	left: 0px;
+	width: 240px;
+	height: 240px;
+}
+
+div#sView {
+	position: absolute;
+	bottom: 35px;
+	right: 0px;
+	width: 64px;
+	height: 64px;
+}
+
+#display {
+	width: 100%;
+	border: 1px solid #33CCFF;
+	height: 40px;
+	font-size: 24px;
+	text-align: right;
+	background-color: #33CCFF;
+	color: white;
+	margin: 0;
+	padding: 0;
+}
+
+#main {
+	display: block;
+}
+
+#incoming {
+	position: absolute;
+	top: 0px;
+	bottom: 0px;
+	left: 0px;
+	right: 240px;
+	background-color: white;
+	overflow: hidden;
+}
+
+#incoming .tools {
+	padding: 5px;
+	font-size: 18px;
+}
+
+
+#incall {
+	position: absolute;
+	top: 0px;
+	bottom: 0px;
+	left: 0px;
+	right: 240px;
+	background-color: white;
+	overflow: hidden;
+}
+
+#incall .tools {
+	padding: 5px;
+	font-size: 18px;
+}
+
+#settings {
+	background: white;
+	position: absolute;
+	top: 360px;
+	left: 0px;
+	right: 0px;
+	bottom: 0px;
+	font-size: 14px;
+	overflow: hidden;
+}
+
+#settings .tools {
+	padding: 5px;
+	font-size: 18px;
+}
+
+
