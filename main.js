@@ -14,11 +14,11 @@ chrome.app.runtime.onLaunched.addListener(function() {
   chrome.app.window.create('phone.html', {
     bounds: {
       width: 240,
-      height: 340
+      height: 420
     },
     maxWidth: 240,
     minWidth: 240,
-    minHeight: 340,
-    maxHeight: 340
+    minHeight: 420,
+    maxHeight: 450
   });
 });

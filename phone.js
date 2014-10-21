@@ -165,7 +165,7 @@ function padZero(i) {
 
 function accept() {
 	if (active_call !== null) {
-		active_call.answer({mediaConstraints: {audio: true, video: true}});
+		active_call.answer({mediaConstraints: {audio: true, video: false}});
 	}
 }
 
@@ -191,7 +191,7 @@ $(document).ready(function() {
 			var eventHandlers = {};
 			var options = {
 				'eventHandlers': eventHandlers,
-				'mediaConstraints': {audio: true, video: true}
+				'mediaConstraints': {audio: true, video: false}
 			};
 			sipStack.call($('#display').val(), options);
  		} else {
