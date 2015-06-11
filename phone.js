@@ -9,17 +9,24 @@ var callStart = 0;
  */
 function createSipStack() {
 	var configuration = {
-  		uri: config.user,
+  		uri: 'sip:'+config.user,
 		password: config.pass,
 		ws_servers: config.url,
 		display_name: 'test',
 		no_answer_timeout: 20,
 		register: true,
-		trace_sip: true
+		trace_sip: true,
+		connection_recovery_max_interval: 30,
+		connection_recovery_min_interval: 2,
+		log: { level: 'debug' }
 	};
 
-	console.info("Create SIP stack...");
-	sipStack = new JsSIP.UA(configuration);
+	console.info("Create SIP stack with configuration: " + JSON.stringify(configuration));
+	try {
+		sipStack = new JsSIP.UA(configuration);
+	} catch (e) {
+		console.debug(e.toString());
+	}
 	sipStack.on('connected', function(e){ console.debug("Connected to websocket."); });
 	sipStack.on('disconnected', function(e){ console.debug("Disconnected from websocket"); });
 	sipStack.on('newMessage', function(e) {
@@ -27,35 +34,36 @@ function createSipStack() {
 	});
 	sipStack.on('newRTCSession', function(e) {
 		console.debug("New session created");
-		if(active_call === null) {
+		if(active_call === null && e.session !== undefined) {
 			// new incoming call
-			active_call = e.data.session;
+			active_call = e.session;
 			active_call.on('failed', function(e) {
-				console.warn('Call failed');
+				console.log('call failed with cause: '+ e.cause);
 				active_call = null;
 				setTimeout(function() { moveUIToState('phone'); }, 1500);
 				chrome.notifications.clear("ring", function() {});
 			});
-			active_call.on('started', function(e) {
-				console.info("Call started");
+			active_call.on('confirmed', function(e) {
+				console.log('call confirmed');
 				callStart = new Date().getTime();
 				chrome.notifications.clear("ring", function() {});
-				if ( active_call.getLocalStreams().length > 0) {
-				    	console.debug('Have local stream');
-					var selfView = document.getElementById('selfView');
-					selfView.src = window.URL.createObjectURL(active_call.getLocalStreams()[0]);
-					selfView.volume = 0;
-				} else {
-				    	console.warn('No local stream!');
-				} 
-				if ( active_call.getRemoteStreams().length > 0) {
-					console.debug('Start remote audio stream');
-					var remoteView = document.getElementById('remoteView');
-					remoteView.src = window.URL.createObjectURL(active_call.getRemoteStreams()[0]);
-				}
+				var selfView = document.getElementById('selfView');
+				var local_stream = active_call.connection.getLocalStreams()[0];
+
+				// Attach local stream to selfViewif ( active_call.getLocalStreams().length > 0) {
+				var selfView = document.getElementById('selfView');
+				selfView = JsSIP.rtcninja.attachMediaStream(selfView, local_stream);
 				moveUIToState('incall');
-				
 			});
+			
+			active_call.on('addstream', function(e) {
+				var stream = e.stream;
+				console.log('remote stream added');
+				// Attach remote stream to remoteView
+				var remoteView = document.getElementById('remoteView');
+				remoteView = JsSIP.rtcninja.attachMediaStream(remoteView, stream);
+			});
+			
 			active_call.on('ended', function(e) {
 				console.debug("Call terminated");
 				moveUIToState('phone');
@@ -64,7 +72,7 @@ function createSipStack() {
 			});
 			
 			// ui
-			if(e.data.session.direction === 'incoming') {
+			if(e.session.direction === 'incoming') {
 				moveUIToState('incoming');
 				// notification
 				var opt = {
@@ -163,6 +171,24 @@ function padZero(i) {
 	return i;
 }
 
+function originate() {
+	if(active_call === null) {
+		console.debug("New call to " + $('#display').val());
+		var eventHandlers = {};
+		
+		var options = {
+			'eventHandlers': eventHandlers,
+			'mediaConstraints': {audio: true, video: false}
+		};
+		
+		active_call = sipStack.call($('#display').val(), options);
+		
+	} else {
+		console.log("Hangup active call");
+		active_call.terminate();
+	}
+}
+
 function accept() {
 	if (active_call !== null) {
 		active_call.answer({mediaConstraints: {audio: true, video: false}});
@@ -185,20 +211,7 @@ $(document).ready(function() {
 	console.info("Starting phone app ...");
 
 	// UI configuration
-	$('#dialbtn').click(function() {
-		if(active_call === null) {
-			console.debug("New call to " + $('#display').val());
-			var eventHandlers = {};
-			var options = {
-				'eventHandlers': eventHandlers,
-				'mediaConstraints': {audio: true, video: false}
-			};
-			sipStack.call($('#display').val(), options);
- 		} else {
-			console.debug("Hangup active call");
-			active_call.terminate();
-		}
-	});
+	$('#dialbtn').click(originate);
 	$('#dialbtn').mousedown(function() { 
 		$('#dialbtn').removeClass('dial');
 		$('#dialbtn').addClass('dial_pressed');
