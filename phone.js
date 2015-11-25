@@ -1,38 +1,40 @@
 var config = null;
-var sipStack = null;
+var ua = null;
 var active_call = null;
 var registered = false;
 var callStart = 0;
+
+JsSIP.debug.enable('JsSIP:*');
 
 /**
  * Initialize sip stack
  */
 function createSipStack() {
+	
 	var configuration = {
   		uri: 'sip:'+config.user,
 		password: config.pass,
 		ws_servers: config.url,
-		display_name: 'test',
 		no_answer_timeout: 20,
 		register: true,
 		trace_sip: true,
 		connection_recovery_max_interval: 30,
-		connection_recovery_min_interval: 2,
-		log: { level: 'debug' }
+		connection_recovery_min_interval: 2
 	};
 
 	console.info("Create SIP stack with configuration: " + JSON.stringify(configuration));
 	try {
-		sipStack = new JsSIP.UA(configuration);
+		ua = new JsSIP.UA(configuration);
 	} catch (e) {
 		console.debug(e.toString());
 	}
-	sipStack.on('connected', function(e){ console.debug("Connected to websocket."); });
-	sipStack.on('disconnected', function(e){ console.debug("Disconnected from websocket"); });
-	sipStack.on('newMessage', function(e) {
+	
+	ua.on('connected', function(e){ console.debug("Connected to websocket."); });
+	ua.on('disconnected', function(e){ console.debug("Disconnected from websocket"); });
+	ua.on('newMessage', function(e) {
 		e.data.message.accept();
 	});
-	sipStack.on('newRTCSession', function(e) {
+	ua.on('newRTCSession', function(e) {
 		console.debug("New session created");
 		if(active_call === null && e.session !== undefined) {
 			// new incoming call
@@ -93,7 +95,7 @@ function createSipStack() {
 			e.data.session.terminate({status_code: 486});
 		}
 	});
-	sipStack.on('registered', 
+	ua.on('registered', 
 			function(e) {
 				console.debug("Registered.");
 				if(!registered) {
@@ -112,11 +114,11 @@ function createSipStack() {
 				}
 			}
 	);
-	sipStack.on('unregistered', function(e){ console.debug("Unregistered."); });
-	sipStack.on('registrationFailed', function(e){ console.debug("Registration failed."); });
+	ua.on('unregistered', function(e){ console.debug("Unregistered."); });
+	ua.on('registrationFailed', function(e){ console.debug("Registration failed."); });
 	
 	console.info("Starting stack ...");
-	sipStack.start();
+	ua.start();
 }
 
 function moveUIToState(panel) {
@@ -156,8 +158,8 @@ function chrono() {
 		var m = Math.floor(s/60);
 		var s = s - m*60;
 		// add a zero in front of numbers<10
-		m=padZero(m);
-		s=padZero(s);
+		m = padZero(m);
+		s = padZero(s);
 		var chr = m+":"+s;
 		$('#incall div.tools').html('In a call <span style="float: right; font-size: 0.9em;">'+ chr +'</span>');
 		setTimeout(function(){chrono()},500);
@@ -165,9 +167,8 @@ function chrono() {
 }
 
 function padZero(i) {
-	if (i < 10) {
-	  i="0" + i;
-	}
+	if (i < 10)
+	  i = "0" + i;
 	return i;
 }
 
@@ -181,7 +182,7 @@ function originate() {
 			'mediaConstraints': {audio: true, video: false}
 		};
 		
-		active_call = sipStack.call($('#display').val(), options);
+		active_call = ua.call($('#display').val(), options);
 		
 	} else {
 		console.log("Hangup active call");
@@ -306,6 +307,8 @@ $(document).unload(function() {
 	console.info("Unload application");
 	if(active_call !== null) active_call.terminate();
 
-	if(sipStack !== null)
-		sipStack.stop();
+	if(ua !== null) {
+		ua.unregister();
+		ua.stop();
+	}
 });
