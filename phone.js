@@ -16,6 +16,7 @@ function createSipStack() {
 		password: config.pass,
 		ws_servers: config.url,
 		no_answer_timeout: 20,
+		session_timers: false,
 		register: true,
 		trace_sip: true,
 		connection_recovery_max_interval: 30,
@@ -49,15 +50,14 @@ function createSipStack() {
 				console.log('call confirmed');
 				callStart = new Date().getTime();
 				chrome.notifications.clear("ring", function() {});
-				var selfView = document.getElementById('selfView');
-				var local_stream = active_call.connection.getLocalStreams()[0];
+				//var selfView = document.getElementById('selfView');
+				//var local_stream = active_call.connection.getLocalStreams()[0];
 
-				// Attach local stream to selfViewif ( active_call.getLocalStreams().length > 0) {
-				var selfView = document.getElementById('selfView');
-				selfView = JsSIP.rtcninja.attachMediaStream(selfView, local_stream);
+				// Attach video local stream to selfViewif ( active_call.getLocalStreams().length > 0) {
+				//var selfView = document.getElementById('selfView');
+				//selfView = JsSIP.rtcninja.attachMediaStream(selfView, local_stream);
 				moveUIToState('incall');
 			});
-			
 			active_call.on('addstream', function(e) {
 				var stream = e.stream;
 				console.log('remote stream added');
@@ -65,14 +65,15 @@ function createSipStack() {
 				var remoteView = document.getElementById('remoteView');
 				remoteView = JsSIP.rtcninja.attachMediaStream(remoteView, stream);
 			});
-			
 			active_call.on('ended', function(e) {
 				console.debug("Call terminated");
 				moveUIToState('phone');
 				active_call = null;	
 				chrome.notifications.clear("ring", function() {});
 			});
-			
+			active_call.on('reinvite', function(e) {
+				console.log('call reinvited with request: '+ e.request);
+			});
 			// ui
 			if(e.session.direction === 'incoming') {
 				moveUIToState('incoming');
