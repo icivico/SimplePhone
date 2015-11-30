@@ -46,6 +46,9 @@ function createSipStack() {
 				setTimeout(function() { moveUIToState('phone'); }, 1500);
 				chrome.notifications.clear("ring", function() {});
 			});
+			active_call.on('progress', function(e) {
+				if (e.originator === 'remote') e.response.body = null;
+			});
 			active_call.on('confirmed', function(e) {
 				console.log('call confirmed');
 				callStart = new Date().getTime();
@@ -109,7 +112,7 @@ function createSipStack() {
 					};
 					chrome.notifications.create("reg", opt, 
 							function() {
-								setTimeout(function() { chrome.notifications.clear("reg", function() {}); }, 5000);
+								setTimeout(function() { chrome.notifications.clear("reg", function() {}); }, 3000);
 							}
 					);
 				}
@@ -173,14 +176,14 @@ function padZero(i) {
 	return i;
 }
 
-function originate() {
+function originate(videosupport) {
 	if(active_call === null) {
 		console.debug("New call to " + $('#display').val());
 		var eventHandlers = {};
 		
 		var options = {
 			'eventHandlers': eventHandlers,
-			'mediaConstraints': {audio: true, video: false}
+			'mediaConstraints': {audio: true, video: videosupport}
 		};
 		
 		active_call = ua.call($('#display').val(), options);
@@ -213,7 +216,7 @@ $(document).ready(function() {
 	console.info("Starting phone app ...");
 
 	// UI configuration
-	$('#dialbtn').click(originate);
+	$('#dialbtn').click(function() { originate(false); });
 	$('#dialbtn').mousedown(function() { 
 		$('#dialbtn').removeClass('dial');
 		$('#dialbtn').addClass('dial_pressed');
@@ -225,6 +228,20 @@ $(document).ready(function() {
 	$('#dialbtn').mouseout(function() { 
 		$('#dialbtn').removeClass('dial_pressed');
 		$('#dialbtn').addClass('dial');
+	});
+	
+	$('#videobtn').click(function() { originate(true); });
+	$('#videobtn').mousedown(function() { 
+		$('#videobtn').removeClass('dial');
+		$('#videobtn').addClass('dial_pressed');
+	});
+	$('#videobtn').mouseup(function() { 
+		$('#videobtn').removeClass('dial_pressed');
+		$('#videobtn').addClass('dial');
+	});
+	$('#videobtn').mouseout(function() { 
+		$('#videobtn').removeClass('dial_pressed');
+		$('#videobtn').addClass('dial');
 	});
 
 	$('#hangup').mousedown(function() { 
@@ -306,8 +323,10 @@ $(document).ready(function() {
 
 $(document).unload(function() {
 	console.info("Unload application");
-	if(active_call !== null) active_call.terminate();
-
+	
+	if(active_call !== null) 
+		active_call.terminate();
+	
 	if(ua !== null) {
 		ua.unregister();
 		ua.stop();

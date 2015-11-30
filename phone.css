@@ -6,6 +6,7 @@ div.dialpad table {
 	width: 100%;
 	border-collapse: collapse;
 	border: 1px solid #ddd;
+	table-layout: fixed;
 }
 
 div.dialpad table tr td {
@@ -55,19 +56,33 @@ div.button {
 }
 
 div.dial {
-	background: linear-gradient(to bottom, #afec20 0%,#98be26 32%,#64781c 100%); /* W3C */
+	background-color: #98be26;
 }
 
 div.dial_pressed {
-	background: linear-gradient(to bottom, #64781c 0%,#98be26 68%,#afec20 100%); /* W3C */
+	background: #64781c;
+}
+
+div.audiocall {
+	background-image: url(dial.png);
+	background-repeat: no-repeat;
+	background-size: 24px 24px;
+	background-position: center;
+}
+
+div.videocall {
+	background-image: url(cam.png);
+	background-repeat: no-repeat;
+	background-size: 24px 24px;
+	background-position: center;
 }
 
 div.hangup {
-	background: linear-gradient(to bottom, #ec202b 0%,#be2636 32%,#781c28 100%); /* W3C */
+	background-color: #be2636; /* W3C */
 }
 
 div.hangup_pressed {
-	background: linear-gradient(to bottom, #781c28 0%,#be2636 68%,#ec202b 100%); /* W3C */
+	background-color: #781c28; /* W3C */
 }
 
 div.save {
@@ -104,8 +119,8 @@ div.back {
 	margin: 0px;
 	margin-left: 10px;
 	height: 28px;
-	/*background: url(settings.png) no-repeat;
-	background-size: 32px 32px;*/
+	background: url(delete.png) no-repeat;
+	background-size: 32px 32px;
 	text-align: center;
 	cursor: pointer;
 }
